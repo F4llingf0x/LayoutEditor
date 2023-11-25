@@ -1,61 +1,77 @@
-*{
-    margin: 0;
-    padding: 0;
-   /* box-sizing: border-box; */
+:root {
+  --darkBlue: #25274d;
+  --middleBlue: #29648a;
+  --lightBlue: #2e9cca;
+  --darkGray: #464866;
+  --lightGray: #aaabb8;
 }
 
-
-body{
-    overflow: hidden;
+* {
+  margin: 0;
+  padding: 0;
 }
 
-canvas{
-    background: #0384fc;
-    position: absolute;
+body {
+  overflow: hidden;
 }
 
+canvas {
+  background: var(--lightGray);
+  position: absolute;
+}
 
 .btn-group button {
-    text-align: center;
-    background-color: #04AA6D; /* Green background */
-    border: 1px solid green; /* Green border */
-    color: white; /* White text */
-    padding: 10px; /* Some padding */
-    cursor: pointer; /* Pointer/hand icon */
-    width: 100%; /* Set a width if needed */
-    display: block; 
-    position: relative;
-    z-index: 10;/* Make the buttons appear below each other */
-  }
+  text-align: center;
+  background-color: var(--darkGray);
+  color: var(--lightGray);
 
- 
-  .btn-group button:not(:last-child) {
-    border-bottom: none; /* Prevent double borders */
-  }
+  padding: 10px;
+  cursor: pointer;
+  width: 100%;
+  display: block;
+  position: relative;
+  z-index: 10; /* Make the buttons appear below each other */
+}
+.selected {
+  background-color: var(--lightBlue) !important;
+  color: var(--darkGray) !important;
+}
 
-  .btn-group button:last-child{
-    border-radius: 0 0 10px 10px;
-  }
-  
-  /* Add a background color on hover */
-  .btn-group button:hover{
-    background-color: #3e8e41;
-  }
+.btn-group:first-child {
+  text-align: center;
+  width: 100%;
+  border-radius: 10px 10px 0 0;
 
-  #btnGroupHeader {
-    text-align: center;
-    display: block; 
-    width: 100%;
-    border-radius:10px 10px 0 0;
+  cursor: move;
+  z-index: 10;
+  background-color: var(--darkGray);
+  color: var(--lightGray);
+}
 
-    cursor: move;
-    z-index: 10;
-    background-color: gray;
-    color: #fff;
-  }
+.btn-group button:not(:last-child) {
+  border-bottom: none; /* Prevent double borders */
+}
 
-  #btnGroupContainer {
-    position: absolute;
-    top: 3%;
-    left: 2%;
-  }
+.btn-group button:last-child {
+  border-radius: 0 0 10px 10px;
+}
+
+.btn-group button:hover {
+  background-color: var(--middleBlue);
+}
+
+#menu {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  top: 3%;
+  left: 2%;
+}
+
+#selectors {
+  position: absolute;
+  display: flex;
+  flex-direction: row;
+  top: 30%;
+  left: 2%;
+}

@@ -1,28 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Layout editor </title>
-    <link rel="icon" type="image/x-icon" href="/resources/favicon.png">
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Layout editor</title>
+    <link rel="icon" type="image/x-icon" href="/resources/favicon.png" />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="temp.css" />
+  </head>
+  <body>
     <canvas id="layoutSpace"></canvas>
-    <script src="editor.js"></script>
-    <div id="btnGroupContainer">
-        <div id="menu" class="btn-group">
-            <div id="btnGroupHeader">°°°</div>
-            <button id="rectButton">Rectangle</button>
-            <button id="circButton">Circle</button>
-            <button id ="arcButton">Arc</button>
-            <button id ="deleteButton">Delete</button>
-        </div>
-    </div>
-    
-    
-    <script src="dragMenu.js"></script>
 
-</body>
+    <div class="btnGroupContainer" , id="menu">
+      <div class="btn-group">
+        <div id="btnGroupHeader">°°°</div>
+        <button id="rectButton">Rectangle</button>
+        <button id="circButton">Circle</button>
+        <button id="arcButton">Arc</button>
+        <button id="deleteButton">Delete</button>
+      </div>
+    </div>
+
+    <div class="btnGroupContainer" id="selectors">
+      <div class="btn-group">
+        <div id="btnGroupHeader">°°°</div>
+        <button id="draw">Draw</button>
+        <button id="select">Select</button>
+      </div>
+    </div>
+
+    <div id="palette">
+      <p>Dark blue</p>
+      <p>Middle blue</p>
+      <p>Light blue</p>
+      <p>Dark grey</p>
+      <p>Light grey</p>
+    </div>
+
+    <script src="./figures/dot.js"></script>
+    <script src="./figures/rectangle.js"></script>
+    <script src="./figures/circle.js"></script>
+    <script src="editorUtil.js"></script>
+    <script src="editor.js"></script>
+    <script src="dragMenu.js"></script>
+  </body>
 </html>

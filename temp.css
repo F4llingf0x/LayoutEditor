@@ -1,0 +1,21 @@
+#palette {
+  position: absolute;
+  top: 80%;
+  left: 2%;
+}
+
+#palette p:nth-child(1) {
+  background-color: var(--darkBlue);
+}
+#palette p:nth-child(2) {
+  background-color: var(--middleBlue);
+}
+#palette p:nth-child(3) {
+  background-color: var(--lightBlue);
+}
+#palette p:nth-child(4) {
+  background-color: var(--darkGray);
+}
+#palette p:nth-child(5) {
+  background-color: var(--lightGray);
+}

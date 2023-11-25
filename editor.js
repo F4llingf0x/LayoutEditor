@@ -1,116 +1,137 @@
-const canvas = document.getElementById('layoutSpace');
-const ctx = canvas.getContext('2d');
+const r = document.querySelector(":root");
+const rs = getComputedStyle(r);
+
+const ctx = canvas.getContext("2d");
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
-const recButton = document.getElementById('rectButton');
-const circButton = document.getElementById('circButton');
-const arcButton = document.getElementById('arcButton');
-const deleteButton = document.getElementById('deleteButton');
+const everyButton = document.querySelectorAll(".btn-group button");
 
+const recButton = document.getElementById("rectButton");
+const circButton = document.getElementById("circButton");
+const arcButton = document.getElementById("arcButton");
+const deleteButton = document.getElementById("deleteButton");
 
-let markerColor = 'white';
-let markerDistance = canvas.width / 30;
+let markerColor = rs.getPropertyValue("--darkGray");
+let elementColor = rs.getPropertyValue("--darkBlue");
+let selectedColor = rs.getPropertyValue("--lightBlue");
 
 let currentShape;
 let createdShapes = [];
+let currentSnapPoint;
+let snapPoints = [];
+let snapDistance = 10;
 
-class Dot {
-    constructor(x, y){
-        this.x = x;
-        this.y = y;
-        this.radius = canvas.width * 0.0005;
-        this.color = markerColor;
-    }
-    
-    draw(){
-        ctx.fillStyle = this.color;
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
-        ctx.fill();
-    }
-}
-
-
-class Rectang {
-    constructor(x, y){
-        this.x0 = x;
-        this.y0 = y;
-        this.x1 = 0;
-        this.y1 = 0;
-        this.color = markerColor;
-    }
-    
-    draw(){
-        ctx.strokeStyle = markerColor;
-        ctx.beginPath();
-        ctx.rect(this.x0, this.y0, this.x1, this.y1);
-        ctx.stroke();
-    }
-
-    setEnd(x1, y1){
-        this.x1 = x1 - this.x0;
-        this.y1 = y1 - this.y0;
-    }
-
-}
-
-function initBackground(){
-    numberOfXMarkers = canvas.width / markerDistance;
-    numberOfYMarkers = parseInt(canvas.height / markerDistance);
-   
-    xStart = (canvas.width - (markerDistance * numberOfXMarkers)) / 2;
-    yStart = (canvas.height - (markerDistance * numberOfYMarkers)) / 2;
-
-    for (let i = 0; i < numberOfXMarkers; i++) {
-        for (let j = 0; j < numberOfYMarkers; j++) {
-           currentMarker = new Dot(xStart + (i * markerDistance), yStart + (j * markerDistance));
-           currentMarker.draw();
-        }
-    }
-}
+let currentButton = null;
 
 let numberOfClicks = 0;
+let isInitFinished = false;
 let isDrawingStarted = false;
-canvas.onclick = drawRect;
-canvas.onmousemove = followRect;
 
+canvas.onclick = shapeSelector;
+canvas.onmousemove = mouseMove;
+//canvas.onmousemove = snapToPoints;
 
-function drawRect(e) {
-    if(!isDrawingStarted){
-        currentShape = new Rectang(e.x, e.y);
-        isDrawingStarted = true;
-    } else {
-        createdShapes.push(currentShape);
-        document.onmouseup = null;
-        document.onmousemove = null;
-        isDrawingStarted = false;
-        currentShape = null;
+everyButton.forEach((button) => {
+  button.addEventListener("click", () => {
+    if (currentButton != null) {
+      currentButton.classList.remove("selected");
     }
+    currentButton = button;
+    button.classList.add("selected");
+  });
+});
+
+function shapeSelector(e) {
+  x = e.x;
+  y = e.y;
+  if (currentSnapPoint) {
+    x = currentSnapPoint.x;
+    y = currentSnapPoint.y;
+  }
+  switch (currentButton === null || currentButton.id) {
+    case "rectButton":
+      drawElement(x, y, Rectang);
+      break;
+    case "circButton":
+      drawElement(x, y, Circle);
+      break;
+  }
 }
 
-function followRect(e){
-    if(isDrawingStarted){
-        currentShape.setEnd(e.x, e.y);
-    }
+function drawElement(x, y, figure) {
+  if (!isDrawingStarted) {
+    currentShape = new figure(x, y);
+    isDrawingStarted = true;
+  } else {
+    createdShapes.push(currentShape);
+    document.onmouseup = null;
+    document.onmousemove = null;
+    isDrawingStarted = false;
+    currentShape = null;
+  }
 }
 
+function mouseMove(e) {
+  dot = snapToPoints(e);
+  let x = e.x;
+  let y = e.y;
+  if (dot) {
+    x = dot.x;
+    y = dot.y;
+  }
+  renderFigure(x, y);
+}
 
-function animate(){
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    initBackground();
-    if(currentShape){
-        currentShape.draw();
-    }
-    if(createdShapes){
-        createdShapes.forEach(shape => {
-            shape.draw();
-        });
-    }
-    requestAnimationFrame(animate);
+function renderFigure(x, y) {
+  if (isDrawingStarted) {
+    currentShape.setEnd(x, y);
+  }
+}
+
+function animate() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  let dots = initBackground();
+  if (!isInitFinished) {
+    snapPoints = dots;
+    isInitFinished = true;
+  }
+  if (currentShape) {
+    currentShape.draw();
+  }
+  if (createdShapes) {
+    createdShapes.forEach((shape) => {
+      shape.draw();
+    });
+  }
+  if (currentSnapPoint) {
+    currentSnapPoint.draw();
+  }
+  requestAnimationFrame(animate);
 }
 
 animate();
 
-
-
+function snapToPoints(e) {
+  let points = [];
+  let distances = [];
+  snapPoints.forEach((dot) => {
+    let distance = Math.sqrt(
+      Math.pow(dot.x - e.x, 2) + Math.pow(dot.y - e.y, 2)
+    );
+    if (distance < snapDistance) {
+      points.push(dot);
+      distances.push(distance);
+    }
+  });
+  if (points.length != 0) {
+    let selectedPoint = points[distances.indexOf(Math.min(...distances))];
+    let dot = new Dot(selectedPoint.x, selectedPoint.y);
+    dot.color = selectedColor;
+    dot.radius = 5;
+    currentSnapPoint = dot;
+    return dot;
+  } else {
+    currentSnapPoint = null;
+  }
+}
